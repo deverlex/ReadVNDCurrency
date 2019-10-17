@@ -1,6 +1,6 @@
 public class ReadVNDCurrency {
     private static final String[] WORD = {"không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"} ;
-    private static final String[] RANGE = {"", "", "", "nghìn", "", "", "triệu", "", "", "tỷ"};
+    private static final String[] RANGE = {"", "", "nghìn", "nghìn", "", "triệu", "triệu", "", "tỷ", "tỷ"};
     private static final String TEN = "mười";
     private static final String X_TEN = "mươi";
     private static final String HUNDRED = "trăm";
@@ -11,8 +11,8 @@ public class ReadVNDCurrency {
         String numInStr = number.toString();
         String[] chars = numInStr.split("");
         int length = chars.length;
-        if (length > 18)
-            throw new RuntimeException("Supported maximum number is 999.999.999.999.999.999");
+        if (length > 17)
+            throw new RuntimeException("Supported maximum number is 99.999.999.999.999.999");
         String result = "%s";
         int count = 0;
         int i = length;

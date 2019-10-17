@@ -35,4 +35,10 @@ public class Test {
         Assert.assertEquals("một tỷ một trăm nghìn ba trăm hai mươi mốt", ReadVNDCurrency.readNumber(1000100321L));
         Assert.assertEquals("một tỷ không trăm linh một triệu bốn trăm mười nghìn", ReadVNDCurrency.readNumber(1001410000L));
     }
+
+    @org.junit.Test
+    public void testVeryBigNumber() {
+        Assert.assertEquals("chín mươi chín triệu chín trăm chín mươi chín nghìn chín trăm chín mươi chín tỷ chín trăm chín mươi chín triệu chín trăm chín mươi chín nghìn chín trăm chín mươi chín",
+                ReadVNDCurrency.readNumber(99999999999999999L));
+    }
 }
