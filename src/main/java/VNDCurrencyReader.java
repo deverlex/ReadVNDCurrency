@@ -1,4 +1,4 @@
-public class ReadVNDCurrency {
+public class VNDCurrencyReader {
     private static final String[] WORD = {"không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"} ;
     private static final String[] RANGE = {"", "", "", "nghìn", "", "", "triệu", "", "", "tỷ"};
     private static final String TEN = "mười";
