@@ -1,6 +1,6 @@
 public class ReadVNDCurrency {
     private static final String[] WORD = {"không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"} ;
-    private static final String[] RANGE = {"", "", "nghìn", "nghìn", "", "triệu", "triệu", "", "tỷ", "tỷ"};
+    private static final String[] RANGE = {"", "", "", "nghìn", "", "", "triệu", "", "", "tỷ"};
     private static final String TEN = "mười";
     private static final String X_TEN = "mươi";
     private static final String HUNDRED = "trăm";
@@ -17,7 +17,8 @@ public class ReadVNDCurrency {
         int count = 0;
         int i = length;
         while (count < length) {
-            int mod = count % 10;
+            // billion has to move to right one unit
+            int mod = (count > 10 ? count + 1 : count) % 10;
             if (count > 0 && mod > 0 && !isEmptyRange(i, numInStr))
                 result = String.format(result, "%s " + RANGE[mod]);
             if (i - 3 >= 0) {
