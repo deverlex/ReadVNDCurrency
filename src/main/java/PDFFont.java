@@ -1,25 +1,36 @@
 
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.FontNames;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.layout.Style;
+import com.itextpdf.html2pdf.attach.ITagWorker;
+import com.itextpdf.html2pdf.attach.ProcessorContext;
+import com.itextpdf.html2pdf.attach.impl.tags.SpanTagWorker;
+import com.itextpdf.html2pdf.css.apply.ICssApplier;
+import com.itextpdf.html2pdf.css.apply.ICssApplierFactory;
+import com.itextpdf.html2pdf.css.apply.impl.BlockCssApplier;
+import com.itextpdf.html2pdf.css.apply.impl.DefaultCssApplierFactory;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.font.FontProvider;
-import org.apache.fontbox.ttf.TrueTypeFont;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TransparentColor;
+import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.styledxmlparser.node.IStylesContainer;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.pdf.BaseFont;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDResources;
-import org.apache.pdfbox.pdmodel.ResourceCache;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
-import sun.font.FontFamily;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
@@ -30,25 +41,17 @@ public class PDFFont {
                 "<html>\n" +
                 "<style>\n" +
                 "  div {\n" +
-                "    font-family: \"Times New Roman\", Times, serif;\n" +
+                "    color: black;" +
                 "  }\n" +
                 "  .payment-order {\n" +
-                "    font-family: \"Times New Roman\", Times, serif;\n" +
                 "    margin: 0px 10px 0px 10px;\n" +
                 "  }\n" +
-                "  span {\n" +
-                "    font-family: \"Times New Roman\", Times, serif;\n" +
-                "    font-size: 13px;\n" +
-                "  }\n" +
                 "  p {\n" +
-                "    font-family: \"Times New Roman\", Times, serif;\n" +
-                "    font-size: 13px;\n" +
+                "    font-size: 12px;\n" +
                 "  }\n" +
                 "  table {\n" +
-                "    font-family: \"Times New Roman\", Times, serif;\n" +
                 "    border-collapse: collapse;\n" +
                 "  }\n" +
-                "\n" +
                 "  table#info, th#info, td#info {\n" +
                 "    font-family: \"Times New Roman\", Times, serif;\n" +
                 "    border: 0.3px solid #f0f0f0;\n" +
@@ -60,7 +63,7 @@ public class PDFFont {
                 "  <div class=\"payment-order\">\n" +
                 "    <table width=\"100%\" style=\"margin left: 10px; margin-right: 10px;\">\n" +
                 "      <tr>\n" +
-                "        <td width=\"65%\"><span>Ngân hàng TMCP Kỹ thương Việt Nam</span></td>\n" +
+                "        <td width=\"65%\"><span style=\"color: black;\">Ngân hàng TMCP Kỹ thương Việt Nam</span></td>\n" +
                 "        <td><span>Số giao dịch: FT@transactionCode</span></td>\n" +
                 "      </tr>\n" +
                 "      <tr><td><p></p></td><td></td></tr>\n" +
@@ -70,7 +73,7 @@ public class PDFFont {
                 "      </tr>\n" +
                 "    </table>\n" +
                 "  </div>\n" +
-                "  <div style=\"margin-top: 40px; text-align: center; color: red; font-size: 22px\">\n" +
+                "  <div style=\"margin-top: 40px; text-align: center; color: red; font-size: 22px; font-weight: bold;\">\n" +
                 "    PHIẾU BÁO NỢ\n" +
                 "  </div>\n" +
                 "  <br/>\n" +
@@ -129,7 +132,7 @@ public class PDFFont {
                 "        </td>\n" +
                 "      </tr>\n" +
                 "    </table>\n" +
-                "    <span style=\"margin-left: 2px;\">Chi tiết giao dịch</span>\n" +
+                "    <div style=\"margin-left: 2px;\"><span>Chi tiết giao dịch</span></div>\n" +
                 "    <br/><br/>\n" +
                 "    <table width=\"70%\" style=\"margin-left: 2px;\">\n" +
                 "      <tr>\n" +
@@ -154,11 +157,11 @@ public class PDFFont {
                 "      </tr>\n" +
                 "      <tr>\n" +
                 "        <td width=\"40%\"><span>Số tiền bằng chữ:</span></td>\n" +
-                "        <td style=\"text-align: left\"><span>(Một tỷ đồng)</span></td>\n" +
+                "        <td style=\"text-align: left; font-style: italic;\"><span>(Một tỷ đồng)</span></td>\n" +
                 "      </tr>\n" +
                 "      <tr>\n" +
                 "        <td width=\"40%\"><span>Nội dung thanh toán:</span></td>\n" +
-                "        <td style=\"text-align: left\"><span>TRIPI THANH TOAN DON HANG F12233652,H176522</span></td>\n" +
+                "        <td style=\"text-align: left;\"><span style=\"font-weight:300;\">TRIPI THANH TOAN DON HANG F12233652,H176522</span></td>\n" +
                 "      </tr>\n" +
                 "    </table>\n" +
                 "  </div>\n" +
@@ -180,35 +183,101 @@ public class PDFFont {
                 "</html>";
         ByteArrayOutputStream st = new ByteArrayOutputStream();
         try {
-            ConverterProperties properties = new ConverterProperties();
+            addFontDirectory("roboto");
+            ConverterProperties props = new ConverterProperties();
             FontProvider fontProvider = new FontProvider();
-            fontProvider.addFont("VNTIME.TTF");
-            properties.setFontProvider(fontProvider);
-            HtmlConverter.convertToPdf(htmlImage, st, properties);
+            for (String font : FontProgramFactory.getRegisteredFonts()) {
+                if (font.toLowerCase().contains("roboto")) {
+                    FontProgram fontProgram = FontProgramFactory.createRegisteredFont(font);
+                    fontProvider.addFont(fontProgram);
+                }
+            }
+            Color color = Color.makeColor(DeviceRgb.BLACK.getColorSpace());
+            final ICssApplier customImageCssApplier = new BlockCssApplier() {
+                @Override
+                public void apply(ProcessorContext context, IStylesContainer stylesContainer, ITagWorker tagWorker) {
+                    super.apply(context, stylesContainer, tagWorker);
+                    if (tagWorker instanceof SpanTagWorker) {
+                        SpanTagWorker tagWk = (SpanTagWorker) tagWorker;
+                        if (tagWk.getOwnLeafElements().size() > 0) {
+                            IPropertyContainer ipc = tagWk.getOwnLeafElements().get(0);
+                            ipc.setProperty(Property.FONT_COLOR, new TransparentColor(color, 1));
+                            ipc.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(9));
+                        } else {
+                            System.out.println(tagWk);
+                        }
+
+                    }
+                }
+            };
+            props.setCssApplierFactory(new DefaultCssApplierFactory() {
+                @Override
+                public ICssApplier getCustomCssApplier(IElementNode tag) {
+                    if (tag.name().equals("span")) {
+                        return customImageCssApplier;
+                    }
+                    return super.getCustomCssApplier(tag);
+                }
+            });
+            props.setFontProvider(fontProvider);
+            HtmlConverter.convertToPdf(htmlImage, st, props);
+            st.writeTo(new FileOutputStream("test-aaa.pdf"));
             PDDocument dxc = PDDocument.load(st.toByteArray());
             PDFRenderer pdfRenderer = new PDFRenderer(dxc);
             for (int page = 0; page < dxc.getNumberOfPages(); ++page) {
-                BufferedImage bim = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
-                ImageIOUtil.writeImage(
-                        bim, String.format("pdf-%d.%s", page + 1, "png"), 300);
+                BufferedImage bim = pdfRenderer.renderImageWithDPI(page, 120, ImageType.RGB);
+                ImageIOUtil.writeImage(bim, String.format("new-pdf-%d.%s", page + 1, "png"), 120);
             }
             dxc.close();
             st.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        Document document = new Document();
-//        try {
-//            PdfWriter.getInstance(document, st);
-//            document.open();
-//            HTMLWorker htmlWorker = new HTMLWorker(document);
-//            htmlWorker.parse(new StringReader(htmlImage));
-//            document.close();
+    }
 
+    private static void addFontDirectory(String dir) {
+        File f = new File(dir);
+        if (f.isDirectory()) {
+            File[] files = f.listFiles((d, name) -> {
+                String lower = name.toLowerCase();
+                return lower.endsWith(".otf") || lower.endsWith(".ttf");
+            });
+            for (int i = 0; i < files.length; i++) {
+                FontProgramFactory.registerFont(files[i].getAbsolutePath());
+            }
+        }
+    }
 
-//            dxc.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+    public static byte[] convertHtmlToPdf(String html) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ITextRenderer iTextRenderer = new ITextRenderer();
+            addFontDirectory(iTextRenderer, "roboto");
+            iTextRenderer.setDocumentFromString(html);
+            iTextRenderer.layout();
+            iTextRenderer.createPDF(outputStream);
+            iTextRenderer.finishPDF();
+            outputStream.close();
+
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static void addFontDirectory(ITextRenderer renderer, String dir) throws Exception {
+        File f = new File(dir);
+        if (f.isDirectory()) {
+            File[] files = f.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    String lower = name.toLowerCase();
+                    return lower.endsWith(".otf") || lower.endsWith(".ttf");
+                }
+            });
+            for (int i = 0; i < files.length; i++) {
+                renderer.getFontResolver().addFont(files[i].getAbsolutePath(), BaseFont.IDENTITY_H, true);
+            }
+        }
     }
 }

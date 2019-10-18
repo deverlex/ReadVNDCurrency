@@ -16,4 +16,6 @@ dependencies {
     compile "org.apache.pdfbox:pdfbox-tools:2.0.17"
     compile group: 'com.itextpdf', name: 'itext7-core', version: '7.1.8', ext: 'pom'
     compile group: 'com.itextpdf', name: 'html2pdf', version: '2.1.5'
+    compile group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf-itext5', version: '9.0.1'
+
 }

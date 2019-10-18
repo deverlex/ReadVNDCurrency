@@ -27,3 +27,5 @@ hs_err_pid*
 *.kotlin_module
 
 *.bin
+
+*.pdf
