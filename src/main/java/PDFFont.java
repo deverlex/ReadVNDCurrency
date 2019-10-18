@@ -10,9 +10,7 @@ import com.itextpdf.html2pdf.css.apply.impl.BlockCssApplier;
 import com.itextpdf.html2pdf.css.apply.impl.DefaultCssApplierFactory;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.colors.*;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
@@ -25,6 +23,7 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.IStylesContainer;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfSpotColor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -40,21 +39,15 @@ public class PDFFont {
         String htmlImage = "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "<style>\n" +
-                "  div {\n" +
-                "    color: black;" +
-                "  }\n" +
                 "  .payment-order {\n" +
                 "    margin: 0px 10px 0px 10px;\n" +
-                "  }\n" +
-                "  p {\n" +
-                "    font-size: 12px;\n" +
                 "  }\n" +
                 "  table {\n" +
                 "    border-collapse: collapse;\n" +
                 "  }\n" +
                 "  table#info, th#info, td#info {\n" +
                 "    font-family: \"Times New Roman\", Times, serif;\n" +
-                "    border: 0.3px solid #f0f0f0;\n" +
+                "    border: 1px solid #0f0f0f0f;\n" +
                 "  }\n" +
                 "</style>\n" +
                 "<body>\n" +
@@ -91,8 +84,8 @@ public class PDFFont {
                 "      <td><span>SO 81A TRAN QUOC TOAN, P. TRAN HUNG DAO, Q.HOAN KIEM, TP.HA NOI</span></td>\n" +
                 "    </tr>\n" +
                 "  </table>\n" +
-                "  <div style=\"margin-left: 10px; border: 0.3px solid #f0f0f0;\">\n" +
-                "    <table width=\"100%\">\n" +
+                "  <div style=\"margin-left: 10px; border: 0.3px solid #B2B1AD;\">\n" +
+                "    <table width=\"100%\" style=\"border: 0.3px solid #E6E5DD;\">\n" +
                 "      <tr>\n" +
                 "        <td width=\"50%\"><span>Người chuyển tiền</span></td>\n" +
                 "        <td width=\"50%\"><span>Người nhận tiền</span></td>\n" +
@@ -157,11 +150,11 @@ public class PDFFont {
                 "      </tr>\n" +
                 "      <tr>\n" +
                 "        <td width=\"40%\"><span>Số tiền bằng chữ:</span></td>\n" +
-                "        <td style=\"text-align: left; font-style: italic;\"><span>(Một tỷ đồng)</span></td>\n" +
+                "        <td style=\"text-align: left; font-style: oblique;\"><span>(Một tỷ đồng)</span></td>\n" +
                 "      </tr>\n" +
                 "      <tr>\n" +
                 "        <td width=\"40%\"><span>Nội dung thanh toán:</span></td>\n" +
-                "        <td style=\"text-align: left;\"><span style=\"font-weight:300;\">TRIPI THANH TOAN DON HANG F12233652,H176522</span></td>\n" +
+                "        <td style=\"text-align: left;\"><span>TRIPI THANH TOAN DON HANG F12233652,H176522</span></td>\n" +
                 "      </tr>\n" +
                 "    </table>\n" +
                 "  </div>\n" +
@@ -176,8 +169,8 @@ public class PDFFont {
                 "      </td>\n" +
                 "    </tr>\n" +
                 "  </table>\n" +
-                "  <div style=\"text-align: center; margin-top: 80px;\">\n" +
-                "    <span style=\"font-style: italic;\">Phiếu này được in từ hệ thống ngân hàng điện tử của Techcombank</span>\n" +
+                "  <div style=\"text-align: center; margin-top: 80px; font-style: oblique;\">\n" +
+                "    <span>Phiếu này được in từ hệ thống ngân hàng điện tử của Techcombank</span>\n" +
                 "  </div>\n" +
                 "</body>\n" +
                 "</html>";
@@ -192,7 +185,6 @@ public class PDFFont {
                     fontProvider.addFont(fontProgram);
                 }
             }
-            Color color = Color.makeColor(DeviceRgb.BLACK.getColorSpace());
             final ICssApplier customImageCssApplier = new BlockCssApplier() {
                 @Override
                 public void apply(ProcessorContext context, IStylesContainer stylesContainer, ITagWorker tagWorker) {
@@ -201,7 +193,6 @@ public class PDFFont {
                         SpanTagWorker tagWk = (SpanTagWorker) tagWorker;
                         if (tagWk.getOwnLeafElements().size() > 0) {
                             IPropertyContainer ipc = tagWk.getOwnLeafElements().get(0);
-                            ipc.setProperty(Property.FONT_COLOR, new TransparentColor(color, 1));
                             ipc.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(9));
                         } else {
                             System.out.println(tagWk);
