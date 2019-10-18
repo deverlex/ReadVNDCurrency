@@ -221,7 +221,7 @@ public class PDFFont {
             for (int page = 0; page < dxc.getNumberOfPages(); ++page) {
                 BufferedImage bim = pdfRenderer.renderImageWithDPI(page, 120, ImageType.RGB);
                 Rectangle rect = new Rectangle();
-                rect.setBounds(50,50, 900, 970);
+                rect.setBounds(50,50, 900, 1000);
                 System.out.println(bim.getHeight());
                 System.out.println(bim.getWidth());
                 BufferedImage dest = bim.getSubimage(50, 50, rect.width, rect.height);
